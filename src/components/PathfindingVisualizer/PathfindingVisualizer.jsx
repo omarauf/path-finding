@@ -3,8 +3,8 @@ import Node from "../node/node";
 import styles from "./PathfindingVisualizer.module.css";
 import { dijkstra } from "../../algorithms/dijkstra";
 
-const START_NODE_ROW = 1;
-const START_NODE_COL = 1;
+const START_NODE_ROW = 2;
+const START_NODE_COL = 3;
 const FINISH_NODE_ROW = 8;
 const FINISH_NODE_COL = 16;
 
