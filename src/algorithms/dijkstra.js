@@ -2,7 +2,6 @@ const grid = [];
 export function dijkstra(g, startNode, finishNode) {
   const unvisitedNodes = [];
   let path = [];
-  let counter = 0;
   getAllNodes(g, grid); // copy all node in grid to grid
   //   const visitedNodesInOrder = [];
   setDist(grid); // set dist to unvisited node to 1 (inf)
@@ -21,7 +20,6 @@ export function dijkstra(g, startNode, finishNode) {
       neighbors[i].dist = u.dist + 1;
       neighbors[i].prev = u;
     }
-    counter++;
     if (u === finishNode) break;
 
     // neighbors.forEach(v => {
@@ -39,10 +37,10 @@ export function dijkstra(g, startNode, finishNode) {
       u = u.prev;
     }
   }
-  console.log("grid", grid);
-  console.log("sequence", sequence);
-  console.log("path", path);
-  console.log("counter", counter);
+  // console.log("grid", grid);
+  // console.log("sequence", sequence);
+  // console.log("path", path);
+  return { path, sequence };
 }
 
 // function length(u, v) {

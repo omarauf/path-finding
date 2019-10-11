@@ -3,8 +3,16 @@ import styles from "./node.module.css";
 
 class node extends Component {
   render() {
-    const { row, col, isStart, isEnd } = this.props;
-    const extraClassName = isEnd ? styles.end : isStart ? styles.start : "";
+    const { row, col, isStart, isEnd, isVisited, isPath } = this.props;
+    const extraClassName = isEnd
+      ? styles.end
+      : isStart
+      ? styles.start
+      : isVisited
+      ? styles.visited
+      : isPath
+      ? styles.path
+      : "";
 
     return (
       <div

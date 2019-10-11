@@ -9,23 +9,50 @@ const FINISH_NODE_ROW = 8;
 const FINISH_NODE_COL = 16;
 
 class PathfindingVisualizer extends Component {
-  state = {
-    grid: [],
-    start: null,
-    end: null
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      grid: []
+    };
+  }
 
   componentDidMount() {
     const grid = getInitialGrid();
     this.setState({ grid });
   }
 
-  visualizeDijkstra = () => {
+  visualizeDijkstra = async () => {
     const { grid } = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const endNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
-    // console.log(grid);
-    dijkstra(grid, startNode, endNode);
+    let { path, sequence } = dijkstra(grid, startNode, endNode);
+    console.log(sequence);
+    let grid1D = [].concat(...grid);
+    for (let i = 0; i < path.length; i++) {
+      for (let y = 0; y < grid1D.length; y++) {
+        setInterval(() => {
+          if (grid1D[y].col === path[i].col && grid1D[y].row === path[i].row) {
+            grid[grid1D[y].row][grid1D[y].col].isVisited = true;
+            this.setState({ grid });
+          }
+        }, 25);
+      }
+    }
+    setTimeout(null, 1000);
+    for (let i = 0; i < sequence.length; i++) {
+      for (let y = 0; y < grid1D.length; y++) {
+        // setInterval(() => {
+        if (
+          grid1D[y].col === sequence[i].col &&
+          grid1D[y].row === sequence[i].row
+        ) {
+          grid[grid1D[y].row][grid1D[y].col].isPath = true;
+          this.setState({ grid });
+          console.log("yes");
+        }
+        // }, 25);
+      }
+    }
   };
 
   render() {
@@ -37,7 +64,7 @@ class PathfindingVisualizer extends Component {
           return (
             <div key={rowIdx} className={styles.row}>
               {row.map((node, nodeIdx) => {
-                const { row, col, isEnd, isStart } = node;
+                const { row, col, isEnd, isStart, isVisited, isPath } = node;
                 return (
                   <Node
                     key={nodeIdx}
@@ -45,6 +72,8 @@ class PathfindingVisualizer extends Component {
                     row={row}
                     isEnd={isEnd}
                     isStart={isStart}
+                    isVisited={isVisited}
+                    isPath={isPath}
                   />
                 );
               })}
@@ -65,7 +94,9 @@ function getInitialGrid() {
         row,
         col,
         isStart: START_NODE_ROW === row && START_NODE_COL === col,
-        isEnd: FINISH_NODE_ROW === row && FINISH_NODE_COL === col
+        isEnd: FINISH_NODE_ROW === row && FINISH_NODE_COL === col,
+        isVisited: false,
+        isPath: false
       });
     }
     grid.push(currentRow);

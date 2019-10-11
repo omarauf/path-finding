@@ -11,3 +11,11 @@
 .end {
   background-color: green;
 }
+
+.visited {
+  background-color: yellow;
+}
+
+.path {
+  background-color: red;
+}
