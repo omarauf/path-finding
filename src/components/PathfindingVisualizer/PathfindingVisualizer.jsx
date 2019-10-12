@@ -1,12 +1,16 @@
 import React, { Component } from "react";
 import Node from "../node/node";
 import styles from "./PathfindingVisualizer.module.css";
+import nodeStyles from "../node/node.module.css";
+
 import { dijkstra } from "../../algorithms/dijkstra";
 
 const START_NODE_ROW = 2;
 const START_NODE_COL = 3;
-const FINISH_NODE_ROW = 8;
-const FINISH_NODE_COL = 16;
+const FINISH_NODE_ROW = 19;
+const FINISH_NODE_COL = 39;
+const ROWS = 20;
+const COLS = 40;
 
 class PathfindingVisualizer extends Component {
   constructor(props) {
@@ -14,11 +18,20 @@ class PathfindingVisualizer extends Component {
     this.state = {
       grid: []
     };
+    this.myRef = [];
+    for (let row = 0; row < ROWS; row++) {
+      const currentRow = [];
+      for (let col = 0; col < COLS; col++) {
+        currentRow.push(React.createRef());
+      }
+      this.myRef.push(currentRow);
+    }
   }
 
   componentDidMount() {
     const grid = getInitialGrid();
     this.setState({ grid });
+    // console.log(this.myRef);
   }
 
   visualizeDijkstra = async () => {
@@ -26,37 +39,80 @@ class PathfindingVisualizer extends Component {
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const endNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
     let { path, sequence } = dijkstra(grid, startNode, endNode);
-    console.log(sequence);
+    // console.log(sequence);
+    // let grid1D = [].concat(...grid);
+    // for (let i = 0; i <= path.length; i++) {
+    //   if (i === path.length) {
+    //     setTimeout(() => {
+    //       for (let j = 0; j < sequence.length; j++)
+    //         for (let y = 0; y < grid1D.length; y++) {
+    //           setTimeout(() => {
+    //             if (
+    //               grid1D[y].col === sequence[j].col &&
+    //               grid1D[y].row === sequence[j].row
+    //             ) {
+    //               grid[grid1D[y].row][grid1D[y].col].isPath = true;
+    //               grid[grid1D[y].row][grid1D[y].col].isVisited = false;
+    //               this.setState({ grid });
+    //               console.log(grid);
+    //             }
+    //           }, 100 * j);
+    //         }
+    //     }, 10 * i + 10);
+    //     return;
+    //   }
+    //   setTimeout(() => {
+    //     const node = path[i];
+    //     grid[node.row][node.col].isVisited = true;
+    //     this.setState({ grid });
+    //   }, 10 * i);
+    // }
+
     let grid1D = [].concat(...grid);
-    for (let i = 0; i < path.length; i++) {
-      for (let y = 0; y < grid1D.length; y++) {
-        setInterval(() => {
-          if (grid1D[y].col === path[i].col && grid1D[y].row === path[i].row) {
-            grid[grid1D[y].row][grid1D[y].col].isVisited = true;
-            this.setState({ grid });
-          }
-        }, 25);
+    for (let i = 0; i <= path.length; i++) {
+      if (i === path.length) {
+        setTimeout(() => {
+          for (let j = 0; j < sequence.length; j++)
+            for (let y = 0; y < grid1D.length; y++) {
+              setTimeout(() => {
+                if (
+                  grid1D[y].col === sequence[j].col &&
+                  grid1D[y].row === sequence[j].row
+                ) {
+                  // grid[grid1D[y].row][grid1D[y].col].isPath = true;
+                  // grid[grid1D[y].row][grid1D[y].col].isVisited = false;
+                  // this.setState({ grid });
+
+                  let className = this.myRef[grid1D[y].row][grid1D[y].col]
+                    .current.className;
+                  className = className.concat(` ${nodeStyles.path}`);
+
+                  this.myRef[grid1D[y].row][
+                    grid1D[y].col
+                  ].current.className = className;
+                }
+              }, 100 * j);
+            }
+        }, 10 * i + 10);
+        return;
       }
-    }
-    setTimeout(null, 1000);
-    for (let i = 0; i < sequence.length; i++) {
-      for (let y = 0; y < grid1D.length; y++) {
-        // setInterval(() => {
-        if (
-          grid1D[y].col === sequence[i].col &&
-          grid1D[y].row === sequence[i].row
-        ) {
-          grid[grid1D[y].row][grid1D[y].col].isPath = true;
-          this.setState({ grid });
-          console.log("yes");
-        }
-        // }, 25);
-      }
+      setTimeout(() => {
+        const node = path[i];
+        // grid[node.row][node.col].isVisited = true;
+        // this.setState({ grid });
+        // this.myRef[node.row][
+        //   node.col
+        // ].current.className = `${nodeStyles.visited} ${className}`;
+        let className = this.myRef[node.row][node.col].current.className;
+        className = className.concat(` ${nodeStyles.visited}`);
+        this.myRef[node.row][node.col].current.className = className;
+      }, 10 * i);
     }
   };
 
   render() {
     const { grid } = this.state;
+    // let counter = 0;
     return (
       <React.Fragment>
         <button onClick={this.visualizeDijkstra}>Start Algorithm</button>
@@ -67,6 +123,7 @@ class PathfindingVisualizer extends Component {
                 const { row, col, isEnd, isStart, isVisited, isPath } = node;
                 return (
                   <Node
+                    ref={this.myRef[row][col]}
                     key={nodeIdx}
                     col={col}
                     row={row}
@@ -87,9 +144,9 @@ class PathfindingVisualizer extends Component {
 
 function getInitialGrid() {
   const grid = [];
-  for (let row = 0; row < 10; row++) {
+  for (let row = 0; row < ROWS; row++) {
     const currentRow = [];
-    for (let col = 0; col < 20; col++) {
+    for (let col = 0; col < COLS; col++) {
       currentRow.push({
         row,
         col,

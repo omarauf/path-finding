@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import styles from "./node.module.css";
 
-class node extends Component {
+class Node extends Component {
   render() {
     const { row, col, isStart, isEnd, isVisited, isPath } = this.props;
     const extraClassName = isEnd
@@ -16,6 +16,7 @@ class node extends Component {
 
     return (
       <div
+        ref={this.props.innerRef}
         id={`node-${row}-${col}`}
         className={`${styles.node} ${extraClassName}`}
       ></div>
@@ -23,4 +24,6 @@ class node extends Component {
   }
 }
 
-export default node;
+export default React.forwardRef((props, ref) => (
+  <Node innerRef={ref} {...props} />
+));

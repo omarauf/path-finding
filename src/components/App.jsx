@@ -3,7 +3,11 @@ import PathfindingVisualizer from "./PathfindingVisualizer/PathfindingVisualizer
 
 class App extends React.Component {
   render() {
-    return <PathfindingVisualizer />;
+    return (
+      <React.Fragment>
+        <PathfindingVisualizer />
+      </React.Fragment>
+    );
   }
 }
 

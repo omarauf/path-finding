@@ -40,6 +40,11 @@ export function dijkstra(g, startNode, finishNode) {
   // console.log("grid", grid);
   // console.log("sequence", sequence);
   // console.log("path", path);
+  sequence.reverse();
+  sequence.shift(); //remove first start node
+  sequence.pop(); //remove last end node
+  path.shift(); //remove first start node
+  path.pop(); //remove last end node
   return { path, sequence };
 }
 
