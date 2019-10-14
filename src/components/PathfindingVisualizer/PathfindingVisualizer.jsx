@@ -5,18 +5,22 @@ import nodeStyles from "../node/node.module.css";
 
 import { dijkstra } from "../../algorithms/dijkstra";
 
-const START_NODE_ROW = 2;
-const START_NODE_COL = 3;
-const FINISH_NODE_ROW = 19;
-const FINISH_NODE_COL = 39;
-const ROWS = 20;
-const COLS = 40;
+let START_NODE_ROW = 5;
+let START_NODE_COL = 3;
+let END_NODE_ROW = 8;
+let END_NODE_COL = 3;
+const ROWS = 10;
+const COLS = 20;
+let prevNode = null;
+let currNode = null;
 
 class PathfindingVisualizer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      grid: []
+      grid: [],
+      mousePressed: false,
+      wherePressed: null
     };
     this.myRef = [];
     for (let row = 0; row < ROWS; row++) {
@@ -37,7 +41,7 @@ class PathfindingVisualizer extends Component {
   visualizeDijkstra = async () => {
     const { grid } = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
-    const endNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+    const endNode = grid[END_NODE_ROW][END_NODE_COL];
     let { path, sequence } = dijkstra(grid, startNode, endNode);
     // console.log(sequence);
     // let grid1D = [].concat(...grid);
@@ -68,11 +72,11 @@ class PathfindingVisualizer extends Component {
     //   }, 10 * i);
     // }
 
-    let grid1D = [].concat(...grid);
+    //let grid1D = [].concat(...grid);
     for (let i = 0; i <= path.length; i++) {
       if (i === path.length) {
         setTimeout(() => {
-          for (let j = 0; j < sequence.length; j++)
+          /*for (let j = 0; j < sequence.length; j++)
             for (let y = 0; y < grid1D.length; y++) {
               setTimeout(() => {
                 if (
@@ -92,8 +96,16 @@ class PathfindingVisualizer extends Component {
                   ].current.className = className;
                 }
               }, 100 * j);
-            }
-        }, 10 * i + 10);
+            }*/
+          for (let j = 0; j < sequence.length; j++) {
+            setTimeout(() => {
+              const node = sequence[j];
+              let className = this.myRef[node.row][node.col].current.className;
+              className = className.concat(` ${nodeStyles.path}`);
+              this.myRef[node.row][node.col].current.className = className;
+            }, 100 * j);
+          }
+        }, 1 * i);
         return;
       }
       setTimeout(() => {
@@ -106,8 +118,89 @@ class PathfindingVisualizer extends Component {
         let className = this.myRef[node.row][node.col].current.className;
         className = className.concat(` ${nodeStyles.visited}`);
         this.myRef[node.row][node.col].current.className = className;
-      }, 10 * i);
+      }, 1 * i);
     }
+  };
+
+  onMouseDownEvent = node => {
+    const { row, col, isStart, isEnd } = node.props;
+    prevNode = this;
+    if (isStart) {
+      const { grid } = this.state;
+      grid[row][col].isStart = false;
+      this.myRef[END_NODE_ROW][
+        END_NODE_COL
+      ].current.className += ` ${nodeStyles.stopMouseEvent}`;
+      this.setState({ mousePressed: true, wherePressed: "start" });
+    } else if (isEnd) {
+      const { grid } = this.state;
+      grid[row][col].isEnd = false;
+      this.myRef[START_NODE_ROW][
+        START_NODE_COL
+      ].current.className += ` ${nodeStyles.stopMouseEvent}`;
+      this.setState({ mousePressed: true, wherePressed: "end" });
+    }
+  };
+
+  onMouseEnterEvent = node => {
+    const { row, col, isStart, isEnd } = node.props;
+    let prevRow;
+    let prevCol;
+    if (prevNode) {
+      prevCol = prevNode.props.col;
+      prevRow = prevNode.props.row;
+    }
+
+    if (this.state.mousePressed) {
+      let className = this.myRef[row][col].current.className;
+      if (this.state.wherePressed === "start") {
+        // const { grid } = this.state;
+        // grid[row][col].isStart = true;
+        // this.setState({ grid });
+
+        // next node is not end
+        // if (!isEnd) {
+
+        className = className.concat(` ${nodeStyles.start}`);
+        this.myRef[row][col].current.className = className;
+        this.myRef[prevRow][prevCol].current.className = nodeStyles.node;
+      } else if (this.state.wherePressed === "end") {
+        className = className.concat(` ${nodeStyles.end}`);
+        this.myRef[row][col].current.className = className;
+        this.myRef[prevRow][prevCol].current.className = nodeStyles.node;
+      }
+    }
+  };
+
+  onMouseLeaveEvent = node => {
+    prevNode = node;
+    // console.log("prev node", prevNode);
+    // if (this.state.mousePressed) {
+    //   // const { grid } = this.state;
+    //   // grid[row][col].isStart = false;
+    //   //this.setState({ grid });
+    //   const { row, col } = node.props;
+    //   this.myRef[row][col].current.className = nodeStyles.node;
+    // }
+  };
+
+  onMouseUpEvent = node => {
+    const { grid } = this.state;
+    const { row, col } = node.props;
+    if (this.state.wherePressed === "start") {
+      grid[row][col].isStart = true;
+      START_NODE_ROW = row;
+      START_NODE_COL = col;
+      this.myRef[END_NODE_ROW][END_NODE_COL].current.className =
+        nodeStyles.node + " " + nodeStyles.end;
+    } else if (this.state.wherePressed === "end") {
+      grid[row][col].isEnnd = true;
+      END_NODE_ROW = row;
+      END_NODE_COL = col;
+      this.myRef[START_NODE_ROW][START_NODE_COL].current.className =
+        nodeStyles.node + " " + nodeStyles.start;
+    }
+    this.setState({ grid, mousePressed: false, wherePressed: null });
   };
 
   render() {
@@ -131,6 +224,10 @@ class PathfindingVisualizer extends Component {
                     isStart={isStart}
                     isVisited={isVisited}
                     isPath={isPath}
+                    onMouseEnter={this.onMouseEnterEvent}
+                    onMouseLeave={this.onMouseLeaveEvent}
+                    onMouseDown={this.onMouseDownEvent}
+                    onMouseUp={this.onMouseUpEvent}
                   />
                 );
               })}
@@ -151,7 +248,7 @@ function getInitialGrid() {
         row,
         col,
         isStart: START_NODE_ROW === row && START_NODE_COL === col,
-        isEnd: FINISH_NODE_ROW === row && FINISH_NODE_COL === col,
+        isEnd: END_NODE_ROW === row && END_NODE_COL === col,
         isVisited: false,
         isPath: false
       });

@@ -19,6 +19,18 @@ class Node extends Component {
         ref={this.props.innerRef}
         id={`node-${row}-${col}`}
         className={`${styles.node} ${extraClassName}`}
+        onMouseEnter={() => {
+          this.props.onMouseEnter(this);
+        }}
+        onMouseLeave={() => {
+          this.props.onMouseLeave(this);
+        }}
+        onMouseDown={() => {
+          this.props.onMouseDown(this);
+        }}
+        onMouseUp={() => {
+          this.props.onMouseUp(this);
+        }}
       ></div>
     );
   }
