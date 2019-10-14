@@ -5,12 +5,12 @@ import nodeStyles from "../node/node.module.css";
 
 import { dijkstra } from "../../algorithms/dijkstra";
 
-let START_NODE_ROW = 5;
+let START_NODE_ROW = 4;
 let START_NODE_COL = 3;
 let END_NODE_ROW = 8;
 let END_NODE_COL = 3;
-const ROWS = 10;
-const COLS = 20;
+const ROWS = 21;
+const COLS = 45;
 
 class PathfindingVisualizer extends Component {
   constructor(props) {
@@ -40,8 +40,10 @@ class PathfindingVisualizer extends Component {
       for (let col = 0; col < grid[row].length; col++) {
         if (grid[row][col] !== startNode && grid[row][col] !== endNode)
           grid[row][col].ref.current.className = nodeStyles.node;
+        grid[row][col].isWall = false;
       }
     }
+    this.setState({ grid });
   };
 
   visualizeDijkstra = () => {
@@ -74,7 +76,7 @@ class PathfindingVisualizer extends Component {
   onMouseDownEvent = node => {
     const { grid, startNode, endNode } = this.state;
     const { row, col, isStart, isEnd } = node.props;
-    this.prevNode = this;
+    // this.prevNode = this;
     if (isStart) {
       grid[row][col].isStart = false;
       endNode.ref.current.className += ` ${nodeStyles.stopMouseEvent}`;
@@ -83,12 +85,17 @@ class PathfindingVisualizer extends Component {
       grid[row][col].isEnd = false;
       startNode.ref.current.className += ` ${nodeStyles.stopMouseEvent}`;
       this.setState({ mousePressed: true, wherePressed: "end" });
+    } else {
+      endNode.ref.current.className += ` ${nodeStyles.stopMouseEvent}`;
+      startNode.ref.current.className += ` ${nodeStyles.stopMouseEvent}`;
+      this.toggleWall(node);
+      this.setState({ mousePressed: true, wherePressed: "wall" });
     }
   };
 
   onMouseEnterEvent = node => {
     const { row, col } = node.props;
-    const { grid } = this.state;
+    const { grid, mousePressed, wherePressed } = this.state;
 
     let prevRow;
     let prevCol;
@@ -97,18 +104,32 @@ class PathfindingVisualizer extends Component {
       prevRow = this.prevNode.props.row;
     }
 
-    if (this.state.mousePressed) {
+    if (mousePressed) {
       let className = grid[row][col].ref.current.className;
-      if (this.state.wherePressed === "start") {
+      if (wherePressed === "start")
         className = className.concat(` ${nodeStyles.start}`);
-        grid[row][col].ref.current.className = className;
-        grid[prevRow][prevCol].ref.current.className = nodeStyles.node;
-      } else if (this.state.wherePressed === "end") {
+      else if (wherePressed === "end")
         className = className.concat(` ${nodeStyles.end}`);
-        grid[row][col].ref.current.className = className;
+      if (wherePressed === "start" || wherePressed === "end")
         grid[prevRow][prevCol].ref.current.className = nodeStyles.node;
-      }
+      // grid[row][col].ref.current.className = className;
+      grid[row][col].ref.current.className = className;
+      if (wherePressed === "wall") this.toggleWall(node);
     }
+  };
+
+  toggleWall = node => {
+    const { row, col } = node.props;
+    const { grid } = this.state;
+    let className = grid[row][col].ref.current.className;
+    if (!grid[row][col].isWall) {
+      className = className.concat(` ${nodeStyles.wall}`);
+      grid[row][col].isWall = true;
+    } else {
+      className = nodeStyles.node;
+      grid[row][col].isWall = false;
+    }
+    grid[row][col].ref.current.className = className;
   };
 
   onMouseLeaveEvent = node => {
@@ -128,6 +149,11 @@ class PathfindingVisualizer extends Component {
       grid[row][col].isEnd = true;
       this.setState({ endNode: grid[row][col] });
       const { startNode } = this.state;
+      startNode.ref.current.className =
+        nodeStyles.node + " " + nodeStyles.start;
+    } else if (this.state.wherePressed === "wall") {
+      const { startNode, endNode } = this.state;
+      endNode.ref.current.className = nodeStyles.node + " " + nodeStyles.end;
       startNode.ref.current.className =
         nodeStyles.node + " " + nodeStyles.start;
     }
@@ -151,6 +177,7 @@ class PathfindingVisualizer extends Component {
                   isStart,
                   isVisited,
                   isPath,
+                  isWall,
                   ref
                 } = node;
                 return (
@@ -163,6 +190,7 @@ class PathfindingVisualizer extends Component {
                     isStart={isStart}
                     isVisited={isVisited}
                     isPath={isPath}
+                    isWall={isWall}
                     onMouseEnter={this.onMouseEnterEvent}
                     onMouseLeave={this.onMouseLeaveEvent}
                     onMouseDown={this.onMouseDownEvent}
@@ -188,6 +216,7 @@ function getInitialGrid() {
         col,
         isStart: START_NODE_ROW === row && START_NODE_COL === col,
         isEnd: END_NODE_ROW === row && END_NODE_COL === col,
+        isWall: false,
         isVisited: false,
         isPath: false,
         ref: React.createRef()

@@ -3,7 +3,7 @@ import styles from "./node.module.css";
 
 class Node extends Component {
   render() {
-    const { row, col, isStart, isEnd, isVisited, isPath } = this.props;
+    const { row, col, isStart, isEnd, isVisited, isPath, isWall } = this.props;
     const extraClassName = isEnd
       ? styles.end
       : isStart
@@ -12,6 +12,8 @@ class Node extends Component {
       ? styles.visited
       : isPath
       ? styles.path
+      : isWall
+      ? styles.wall
       : "";
 
     return (
