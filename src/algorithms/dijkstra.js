@@ -1,7 +1,9 @@
+// const GRID = [];
 export function dijkstra(grid, startNode, finishNode) {
   const unvisitedNodes = [];
   const visitedNodesInOrder = [];
   getAllNodes(grid, unvisitedNodes); // copy all node in grid to grid
+  // getAllNodes(grid, GRID); // copy all node in grid to grid
   setDist(unvisitedNodes); // set dist to unvisited node to 1 (inf)
   startNode.dist = 0;
   setPrev(unvisitedNodes); // set prev's node to undefine
@@ -35,7 +37,6 @@ export function dijkstra(grid, startNode, finishNode) {
   sequence.shift(); //remove first start node
   sequence.pop(); //remove last end node
   visitedNodesInOrder.shift(); //remove first start node
-  console.log(sequence.length);
   if (sequence.length > 0) visitedNodesInOrder.pop(); //remove last end node
   return { visitedNodesInOrder, sequence };
 }
@@ -69,6 +70,7 @@ function getAdjacentNode(u, unvisitedNodes) {
         neighbor.push(unvisitedNodes[row][col]);
       }
     }
+
   return neighbor;
 }
 

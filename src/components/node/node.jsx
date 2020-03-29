@@ -17,7 +17,7 @@ class Node extends Component {
       : "";
 
     return (
-      <div
+      <td
         ref={this.props.innerRef}
         id={`node-${row}-${col}`}
         className={`${styles.node} ${extraClassName}`}
@@ -33,7 +33,7 @@ class Node extends Component {
         onMouseUp={() => {
           this.props.onMouseUp(this);
         }}
-      ></div>
+      ></td>
     );
   }
 }

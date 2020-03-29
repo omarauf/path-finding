@@ -1,28 +1,37 @@
 .node {
-  width: 40px;
-  height: 40px;
-  border: 1px solid red;
+  width: 25px;
+  height: 25px;
+  /* border-right: 1px solid rgb(175, 216, 248); */
+  border: 1px solid rgb(175, 216, 248);
   user-select: none;
+  box-sizing: border-box;
+
+  background-color: white;
 }
 
 .start {
-  background-color: blue;
+  background-color: blue !important;
+  border-color: blue;
 }
 
 .end {
-  background-color: green;
+  background-color: green !important;
+  border-color: green;
 }
 
 .visited {
   background-color: yellow;
+  border-color: yellow;
 }
 
 .wall {
-  background-color: gray;
+  background-color: rgb(12, 53, 71);
+  border-color: rgb(12, 53, 71);
 }
 
 .path {
-  background-color: red;
+  background-color: red !important;
+  border-color: red;
 }
 
 .noselect {

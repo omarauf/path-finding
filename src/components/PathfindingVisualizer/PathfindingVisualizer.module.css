@@ -1,4 +1,55 @@
-.row {
-  display: flex;
-  flex-direction: row;
+/* .map {
+} */
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 1px solid rgb(175, 216, 248);
+  margin: 0 auto;
+  margin-top: 0;
 }
+
+/* row */
+.row {
+  display: table-row;
+  vertical-align: inherit;
+  border-color: inherit;
+  box-sizing: border-box;
+  /* border-bottom: 1px solid rgb(175, 216, 248); */
+}
+
+/* last row */
+/* tr:last-child {
+  border-bottom: none;
+} */
+/* last node in each row */
+/* td:last-child {
+  border-right: none;
+} */
+
+/* Stop all mouse event*/
+.stopMouseEvent {
+  pointer-events: none;
+}
+
+button:disabled,
+button[disabled] {
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+}
+
+.container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 120px;
+}
+
+/* .verticalCenter {
+  margin: 0 auto;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+} */
