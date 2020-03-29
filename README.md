@@ -1,6 +1,9 @@
 ## Path finding
 
 simulation for Dijkstra algorithm in react
+try: https://syiner.com/dijkstra/
+
+
 ![](https://raw.githubusercontent.com/omarauf/path-finding/master/screenshot/image.png)
 
 
